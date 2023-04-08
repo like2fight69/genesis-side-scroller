@@ -1,0 +1,8 @@
+got it running with megaman sprite but have to use colors from palette 0
+PAL0 is set in main line:65 and uses palette_all as the first palette
+run powershell as adminastrator and ./in.ps1
+clean objs in powershell
+need to use reverse color on sprite
+use by color select tool to replace color
+have two colors for background palette rn. will add 13 more. program will crash when arrow buttons are pressed because there are no animations. need to add animations to sprite sheet
+uses rgb.png for palettes now

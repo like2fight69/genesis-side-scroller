@@ -1,0 +1,380 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"M",
+				"MAX_POSY"
+			],
+			[
+				"en",
+				"enemiesPosY"
+			],
+			[
+				"fi",
+				"FIX32"
+			],
+			[
+				"ene",
+				"enemiesPosY"
+			],
+			[
+				"m_",
+				"m_position"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "inc/player.h",
+			"settings":
+			{
+				"buffer_size": 1333,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+			]
+		},
+		{
+			"file": "inc/entities.h",
+			"settings":
+			{
+				"buffer_size": 470,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+			]
+		},
+		{
+			"contents": "#include \"genesis.h\"\n\n#include \"player.h\"\n#include \"collision.h\"\n#include \"level.h\"\n#include \"camera.h\"\n#include \"sfx.h\"\n#include \"utils.h\"\n//#include \"lifebar.h\"\n#include \"timer.h\"\n#include \"res_sprite.h\"\n#include \"hitbox.h\"\n#include \"sguage.h\"\n\n\n#define ANIM_STAND          0\n#define ANIM_ATTACK         1\n#define ANIM_WALK           2\n#define ANIM_RUN            3\n#define ANIM_BRAKE          4\n#define ANIM_UP             5\n#define ANIM_CROUNCH        6\n#define ANIM_ROLL           7\n#define ANIM_UPPERCUT       8\n\n#define RUN_SPEED           FIX32(6L)\n#define BRAKE_SPEED         FIX32(2L)\n\n#define ACCEL               FIX32(0.1)\n#define DE_ACCEL            FIX32(0.15)\n\ns16 check = 0;\nint Senergy;\n//Sguage = 100;\n//setup hit BOX_coll\n\n\n/*TODO:\nLevel starts with enemy pointing\nANIM_WAIT after a few seconds\nif after 10 seconds run SPR_setAnim(player, ANIM_WAIT);\ntoggle between melee and spirit gun\nNOTE:health packs should probably be in an array like enemies\nhealth pack for player:DONE\nspirit gauge for special moves:DONE\npunch sound:DONE\n//should set enemy flying\nuppercut move:DONE\nneed to extend sprite sheet\nanimation when enemy hit:DONE\n\n*/\n// player (sonic) sprite\n//Sprite* player;\n\n// physic variables\nfix32 maxSpeed;\nfix32 jumpSpeed;\nfix32 gravity;\n\ns8 test;\n// position and movement variables\n//fix32 posX;\n//fix32 posY;\n//fix32 movX;\nfix32 movY;\n//s16 xOrder;\n//s16 yOrder;\n//int isAttacking;\nint isBlocking;\n//int A_Bpressed;\nint isJumping;\nu32 ss;\nu16 timer;\n\ns16 PLAYER_posX()\n\n{\n    return player->x;\n}\ns16 PLAYER_posY()\n\n{\n    return player->y;\n}\n\nu16 PLAYER_init(u16 vramIndex)\n{\n    // default speeds\n    maxSpeed = MAX_SPEED_DEFAULT;\n    jumpSpeed = JUMP_SPEED_DEFAULT;\n    gravity = GRAVITY_DEFAULT;\n\n\n    // set main sprite position (camera position may be adjusted depending it)\n    posX = FIX32(30L);//48\n    posY = MAX_POSY;\n    movX = FIX32(0);\n    movY = FIX32(0);\n    xOrder = 0;\n    yOrder = 0;\n\n    //set up collision box\n    PLAYER_hitbox.x = posX;\n    PLAYER_hitbox.y = posY;\n    PLAYER_hitbox.w = 16;\n    PLAYER_hitbox.h = 40;//29\n    // init sonic sprite//PAL0\n    player = SPR_addSprite(&sonic_sprite, PLAYER_hitbox.x, PLAYER_hitbox.y, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));//0\n    \n    // do not used static vram allocation here\n    return vramIndex;\n}\n\n\nvoid PLAYER_update(void)\n{\n\n    ///COLLISION_setup();\n    //Sguage = 100;\n\n     //PLAYER_special();\n    // sonic physic, uupdate movement first\n    if (xOrder > 0)\n    {\n        movX += ACCEL;\n        // going opposite side, quick breaking\n        if (movX < 0) movX += ACCEL;\n\n        if (movX >= maxSpeed) movX = maxSpeed;\n    }\n    else if (xOrder < 0)\n    {\n        movX -= ACCEL;\n        // going opposite side, quick breaking\n        if (movX > 0) movX -= ACCEL;\n\n        if (movX <= -maxSpeed) movX = -maxSpeed;\n    }\n    else\n    {\n\n        if ((movX < FIX32(0.1)) && (movX > FIX32(-0.1)))\n            movX = 0;\n        else if ((movX < FIX32(0.3)) && (movX > FIX32(-0.3)))\n            movX -= movX >> 2;\n        else if ((movX < FIX32(1)) && (movX > FIX32(-1)))\n            movX -= movX >> 3;\n        else\n            movX -= movX >> 4;\n    }\n\n    // update position from movement\n    posX += movX;\n    posY += movY;\n\n    // apply gravity if needed\n    if (movY)\n    {\n        if (posY > MAX_POSY)\n        {\n            posY = MAX_POSY;\n            movY = 0;\n        }\n        else movY += gravity;\n    }\n    // clip x pos\n    if (posX >= MAX_POSX)\n    {\n        posX = MAX_POSX;\n        movX = 0;\n    }\n    else if (posX <= MIN_POSX)\n    {\n        posX = MIN_POSX;\n        movX = 0;\n       // SPR_setAnim(player, ANIM_WAIT);\n    }\n\n    // finally update sprite state from internal state\n    if (movY){ ss = 5;waitTick(ss);SPR_setAnim(player, ANIM_ROLL);}\n    else\n    {\n        if (((movX >= BRAKE_SPEED) && (xOrder < 0)) || ((movX <= -BRAKE_SPEED) && (xOrder > 0)))\n        {\n\n            if (player->animInd != ANIM_BRAKE)\n            {\n                XGM_startPlayPCM(SFX_STOP, 1, SOUND_PCM_CH2);\n                //SPR_setAnim(player, ANIM_BRAKE);//BRAKE\n            }\n        }\n        else if ((movX >= RUN_SPEED) || (movX <= -RUN_SPEED))\n          { \n            //SPR_setAnim(player, ANIM_RUN);\n            SPR_setAnim(player, ANIM_RUN);//ANIM_WALK\n        }\n         else  if(isAttacking == 1)\n            {\n                \n                ss = 5;//5\n                \n                XGM_startPlayPCM(SFX_PUNCH, 1, SOUND_PCM_CH2);\n                //time the animation\n               waitTick(ss);\n                //waitMs(ss);\n                //startTimer(timer);\n                   \n                SPR_setAnim(player,ANIM_ATTACK);\n               \n\n            }\n       //test     \n      else if(A_Bpressed == 1  )\n      {\n        \n        ss = 5;//5\n            \n       waitTick(ss);\n\n        SPR_setAnim(player,ANIM_UPPERCUT);\n       // movY = -jumpSpeed;\n        // PLAYER_action(5,8);\n\n      }\n\n\n       //test\n        else if (movX != 0)\n            SPR_setAnim(player, ANIM_WALK);\n        else\n        {\n            if (yOrder < 0)\n                SPR_setAnim(player, ANIM_UP);//ANIM_UP\n            else if (yOrder > 0)\n                SPR_setAnim(player, ANIM_CROUNCH);\n            else\n                SPR_setAnim(player, ANIM_STAND);//STAND\n        }\n    }\n\n    if (movX > 0) SPR_setHFlip(player, FALSE);\n    else if (movX < 0) SPR_setHFlip(player, TRUE);\n    if (movX == 0){\n         //start timer when idle\n        //SPR_setAnim(player, ANIM_ATTACK);\n    }\n}\nvoid PLAYER_action(u32 ticks,int arr[])\n{\n  ticks = 5;//5\n            \n       waitTick(ticks);\n\n       if(arr[10] == 8)\n       { \n        SPR_setAnim(player,ANIM_UPPERCUT);\n        //movY += gravity;\n       }\n}\nvoid PLAYER_updateScreenPosition(void)\n{   //fix32ToInt(posX)\n    setSpritePosition(player, fix32ToInt(posX) - camPosX, fix32ToInt(posY) - camPosY);\n}\n\n\nvoid PLAYER_handleInput(u16 value)\n{\n    u16 time = 10;\n    //bloxk butto\n    if (value & BUTTON_LMB) {\n        //if isBlocking\n        isBlocking = 1;\n       E_hitbox->visibility = FALSE;\n    }else{\n        isBlocking = 0;\n    }\n\n\n    if (value & BUTTON_UP) {\n        //isAttacking = 0;\n        //yOrder = -1;\n        //test\n       //Sguage -= 10;\n\n        //test\n        //SPR_setAnim(sguage, GUAGE_ANIM_70);\n    }\n    if (value & BUTTON_A) {\n       //spirit energy uses 1 points. need to fix guage increments\n        Sguage -= 1;\n     \n        switch(Sguage)\n   {\n   case 90: SPR_setAnim(sguage, GUAGE_ANIM_90);\n      break;\n   case 80: SPR_setAnim(sguage, GUAGE_ANIM_80);\n      break;\n   case 70: SPR_setAnim(sguage, GUAGE_ANIM_70);\n      break;  \n\n      default:\n         KLog_U1(\"test:\", Sguage);\n   }\n\n    //SPR_setAnim(sguage, GUAGE_ANIM_70);\n \n\n    }\n    if(value & BUTTON_UP  )//&& BUTTON_A\n    {\n       //uppercut attack\n        A_Bpressed = 1;\n       //SPR_setAnim(player,ANIM_UPPERCUT);\n    }else{\n        A_Bpressed = 0;\n    }\n    \n\n    if (value & BUTTON_B) \n    {\n        isAttacking = 1;\n    }else{\n       \n        isAttacking = 0;\n    }\n\n\n    //projectile\n    if (value & BUTTON_C) yOrder = -1;  //projectile yOrder = -1;\n    //if (value & BUTTON_B) isAttacking = 1;\n    //else isAttacking = 0;\n    else if (value & BUTTON_DOWN) yOrder = +1;\n    else yOrder = 0;\n\n    if (value & BUTTON_LEFT) xOrder = -1;\n    else if (value & BUTTON_RIGHT) xOrder = +1;\n    else xOrder = 0;\n\n}\n\nvoid PLAYER_doJoyAction(u16 joy, u16 changed, u16 state)\n{   //BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_X | BUTTON_Y | BUTTON_Z\n    if (changed & state & (BUTTON_C ))\n    {\n       \n        \n        if (movY == 0)\n        {   // isJumping = 1;\n            movY = -jumpSpeed;\n            XGM_startPlayPCM(SFX_JUMP, 1, SOUND_PCM_CH2);\n\n\n        }\n    }\n}\n",
+			"file": "src/player.c",
+			"file_size": 7696,
+			"file_write_time": 133218091140000000,
+			"settings":
+			{
+				"buffer_size": 7701,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					3,
+					1,
+					"insert",
+					{
+						"characters": ":"
+					},
+					"AQAAAHoEAAAAAAAAewQAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAegQAAAAAAAB6BAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					4,
+					1,
+					"insert",
+					{
+						"characters": "DONE"
+					},
+					"BAAAAHsEAAAAAAAAfAQAAAAAAAAAAAAAfAQAAAAAAAB9BAAAAAAAAAAAAAB9BAAAAAAAAH4EAAAAAAAAAAAAAH4EAAAAAAAAfwQAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAewQAAAAAAAB7BAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/tylersand/sonic1",
+		"/Users/tylersand/sonic1/inc",
+		"/Users/tylersand/sonic1/src"
+	],
+	"file_history":
+	[
+		"/Users/tylersand/redrectangle/src/main.cpp",
+		"/Users/tylersand/redrectangle/sce_sys/livearea/contents/template.xml",
+		"/Users/tylersand/samples/ctrl/src/main.c",
+		"/Users/tylersand/study/programming/cplus/keywords/makefile",
+		"/Users/tylersand/study/programming/cplus/keywords/ex.cpp",
+		"/Users/tylersand/conan/src/Weapons.cpp",
+		"/Users/tylersand/conan/src/Player.cpp",
+		"/Users/tylersand/conan/src/CollisionManager.cpp",
+		"/Users/tylersand/conan/src/GameObject.h",
+		"/Users/tylersand/conan/src/Enemy.h",
+		"/Users/tylersand/conan/src/Player.h",
+		"/Users/tylersand/conan/todo"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "inc/player.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1333,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								440,
+								440
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 8,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "inc/entities.h",
+					"selected": true,
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 470,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								470,
+								470
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"file": "src/player.c",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7701,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1151,
+								1151
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 474.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.440789089927,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "sonic1.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+		"last_automatic_layout":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		]
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 176.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
