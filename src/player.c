@@ -38,7 +38,6 @@ u16 idleTimer;
 
 
 /*TODO:
-Level starts with enemy pointing
 ANIM_WAIT after a few seconds
 if after 10 seconds run SPR_setAnim(player, ANIM_WAIT);DONE
 player idle animation:DONE
@@ -47,7 +46,7 @@ NOTE:health packs should probably be in an array like enemies
 health pack for player:DONE
 spirit gauge for special moves:DONE
 punch sound:DONE
-Enemy pause when hit:
+enemyHealth:
 //should set enemy flying
 player attack while jumping:
 player block move:
