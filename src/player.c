@@ -115,7 +115,7 @@ u16 PLAYER_init(u16 vramIndex)
     PLAYER_hitbox.h = 40;//29
     // init sonic sprite//PAL0
     player = SPR_addSprite(&sonic_sprite, PLAYER_hitbox.x, PLAYER_hitbox.y, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));//0
-    
+
     // do not used static vram allocation here
     return vramIndex;
 }
@@ -126,7 +126,7 @@ void PLAYER_update(void)
 
     ///COLLISION_setup();
     //Sguage = 100;
-     
+
      //PLAYER_special();
     // sonic physic, uupdate movement first
     if (xOrder > 0)
@@ -199,31 +199,31 @@ void PLAYER_update(void)
             }
         }
         else if ((movX >= RUN_SPEED) || (movX <= -RUN_SPEED))
-          { 
+          {
             //SPR_setAnim(player, ANIM_RUN);
             SPR_setAnim(player, ANIM_RUN);//ANIM_WALK
         }
          else  if(isAttacking == 1)
             {
-                
+
                 ss = 5;//5
-                
+
                 XGM_startPlayPCM(SFX_PUNCH, 1, SOUND_PCM_CH2);
                 //time the animation
                waitTick(ss);
                 //waitMs(ss);
                 //startTimer(timer);
-                   
+
                 SPR_setAnim(player,ANIM_ATTACK);
-               
+
 
             }
-       //test     
+       //test
       else if(A_Bpressed == 1  )
       {
-        
+
         ss = 5;//5
-            
+
        waitTick(ss);
 
         SPR_setAnim(player,ANIM_UPPERCUT);
@@ -234,6 +234,7 @@ void PLAYER_update(void)
       //test
       else if(isBlocking == 1)
       {
+      
         SPR_setAnim(player,ANIM_BLOCK);
       }
 
@@ -259,12 +260,12 @@ void PLAYER_update(void)
     if (movX == 0){
          //start timer when idle
         //startTimer(idleTimer);
-        
+
        idleTimer++;
 
        if(idleTimer >= 1000)
         {
-        
+
         SPR_setAnim(player, ANIM_BLOCK);//placeholder for idle animation
         }
     }
@@ -272,11 +273,11 @@ void PLAYER_update(void)
 void PLAYER_action(u32 ticks,int arr[])
 {
   ticks = 5;//5
-            
+
        waitTick(ticks);
 
        if(arr[10] == 8)
-       { 
+       {
         SPR_setAnim(player,ANIM_UPPERCUT);
         //movY += gravity;
        }
@@ -312,7 +313,7 @@ void PLAYER_handleInput(u16 value)
     if (value & BUTTON_A) {
        //spirit energy uses 1 points. need to fix guage increments
         Sguage -= 1;
-     
+
         switch(Sguage)
    {
    case 90: SPR_setAnim(sguage, GUAGE_ANIM_90);
@@ -320,14 +321,14 @@ void PLAYER_handleInput(u16 value)
    case 80: SPR_setAnim(sguage, GUAGE_ANIM_80);
       break;
    case 70: SPR_setAnim(sguage, GUAGE_ANIM_70);
-      break;  
+      break;
 
       default:
          KLog_U1("test:", Sguage);
    }
 
     //SPR_setAnim(sguage, GUAGE_ANIM_70);
- 
+
 
     }
     if(value & BUTTON_UP  )//&& BUTTON_A
@@ -338,13 +339,13 @@ void PLAYER_handleInput(u16 value)
     }else{
         A_Bpressed = 0;
     }
-    
 
-    if (value & BUTTON_B) 
+
+    if (value & BUTTON_B)
     {
         isAttacking = 1;
     }else{
-       
+
         isAttacking = 0;
     }
     if(value & BUTTON_X)
@@ -371,8 +372,8 @@ void PLAYER_doJoyAction(u16 joy, u16 changed, u16 state)
 {   //BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_X | BUTTON_Y | BUTTON_Z
     if (changed & state & (BUTTON_C ))
     {
-       
-        
+
+
         if (movY == 0)
         {   // isJumping = 1;
             movY = -jumpSpeed;

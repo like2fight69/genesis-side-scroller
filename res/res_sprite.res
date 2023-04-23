@@ -1,9 +1,9 @@
-SPRITE sonic_sprite "sprite/sonic.png" 6 6 FAST 4
+SPRITE sonic_sprite "sprite/sonic.png" 6 6 FAST 1
 SPRITE projectile_sprite "sprite/projectile.png" 6 6 FAST 5
 SPRITE enemy01_sprite "sprite/enemy01.png" 6 4 BEST 5
 SPRITE enemy02_sprite "sprite/enemy02.png" 6 4 BEST 5
 SPRITE hitbox_sprite "sprite/hitbox.png" 6 4 BEST 5
-SPRITE lifebar_sprite "sprite/lifebar.png" 12 6 BEST 0 
+SPRITE lifebar_sprite "sprite/lifebar.png" 12 6 BEST 0
 SPRITE sguage_sprite "sprite/sguage.png" 12 6 BEST 0
 SPRITE healthpack_sprite "sprite/items.png" 6 6 BEST 0
 SPRITE block_sprite "sprite/blocks.png" 6 6 BEST 0
