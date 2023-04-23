@@ -56,7 +56,7 @@ int main(u16 hard)
     //ind += SGUAGE_init(ind);
     //ind += ITEMS_init(ind);
     //ind += PROJECTILE_init(ind);
-    //ind += ENTITIES_init(ind);
+    ind += ENTITIES_init(ind);
     ind += HITBOX_init(ind);
     //ind += HUD_init(ind);
 
@@ -100,7 +100,7 @@ int main(u16 hard)
             //SGUAGE_UPDATE();
            // ind += HITBOX_init(ind);
             HITBOX_update();
-            PROJECTILE_update();
+            //PROJECTILE_update();
             COLLISION_setup();
             // then set camera from player position
             CAMERA_centerOn(fix32ToInt(posX), fix32ToInt(posY));
@@ -117,12 +117,12 @@ int main(u16 hard)
            
             // better to do it separately, when camera position is up to date
             PLAYER_updateScreenPosition();
-            PROJECTILE_updateScreenPosition();
+           // PROJECTILE_updateScreenPosition();
             ENTITIES_updateScreenPosition();
             HITBOX_updateScreenPosition();
              //SGUAGE_updateScreenPosition();
-            ITEMS_updateScreenPosition();
-             BLOCKS_updateScreenPosition();
+           // ITEMS_updateScreenPosition();
+             //BLOCKS_updateScreenPosition();
         }
 
         // update sprites
