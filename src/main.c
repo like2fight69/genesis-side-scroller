@@ -6,7 +6,7 @@
 #include "projectile.h"
 #include "entities.h"
 #include "hud.h"
-
+#include "menu.h"
 #include "level.h"
 #include "camera.h"
 #include "sfx.h"
@@ -17,12 +17,12 @@
 #include "res_sprite.h"
 
 bool paused;
-
+bool menuState;
 // forward
 static void handleInput();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 static void vblank();
-
+//Make menu
 
 int main(u16 hard)
 {
@@ -30,6 +30,7 @@ int main(u16 hard)
     u16 ind;
 
     paused = FALSE;
+    menuState = TRUE;
 
     // initialization
     VDP_setScreenWidth320();
@@ -47,7 +48,17 @@ int main(u16 hard)
 
     // init sprite engine with default parameters
     SPR_init();
+   //test
+    if(menuState)
+    {
+        paused = TRUE;
+        int += MENU_init(ind);
 
+    }else{
+        paused = !paused;
+        menuState = !menuState;
+    }
+    //test
     ind = TILE_USER_INDEX;
     ind += LEVEL_init(ind);
     CAMERA_init();
