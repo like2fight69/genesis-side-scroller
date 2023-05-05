@@ -1,8 +1,6 @@
 #ifndef _ENTITIES_H_
 #define _ENTITIES_H_
 
-#define ANIM_WALKING       0
-#define ANIM_KNOCKED    1
 #define NUM_ENEMY       2
 #define GRAV_DEFAULT     FIX32(0.36)
 
@@ -13,7 +11,6 @@ fix32 enemiesPosY[NUM_ENEMY];
 fix32 moveY;
 fix32 jmpSpd;
 fix32 gravit;
-int entitieKnockedDown;
 s16 enemiesXOrder[NUM_ENEMY];
 void ENTITIES_update(void);
 void ENTITIES_updateScreenPosition();

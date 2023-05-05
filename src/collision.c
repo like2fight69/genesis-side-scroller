@@ -18,7 +18,6 @@
 
  fix32 s_buffer = 4;//4
  int HEA = 100;
- int enemyHealth = 500;
 //check pointer to struct
  /*bool RECT_rect(HIT_box A, HIT_box B)
 {
@@ -73,8 +72,8 @@ void COLLISION_setup()
   blocksPosX[0] = FIX32(300L);
     blocksPosY[0] = MAX_POSY - FIX32(0);//100
 
-//collision block
-//COLLISION_objs[0] = SPR_addSprite(&block_sprite, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
+
+COLLISION_objs[0] = SPR_addSprite(&block_sprite, 0, 0, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
 if(blocksPosX[0] < enemiesPosX[1] + BOX_width && blocksPosX[0]  > enemiesPosX[1])
 {
    SPR_setHFlip(enemies[1], TRUE);
@@ -153,12 +152,11 @@ if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX  &
       KLog_U1("test:", 200);
       //SPR_releaseSprite(enemies[1]);
       // enemiesPosY[1] -= FIX32(30l);
-      
        if (moveY == 0)
         {   // isJumping = 1;
             moveY = -jmpSpd;
             //XGM_startPlayPCM(SFX_JUMP, 1, SOUND_PCM_CH2);
-           entitieKnockedDown = 1;
+
 
         }
       //SPR_setAnim(lifebar, ANIM_90);
@@ -168,14 +166,8 @@ if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX  &
   if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX  && isAttacking == 1) //posX < enemiesPosX[1]  && isAttacking == 1
   {
       KLog_U1("test:", 200);
-      enemyHealth -= 50;
-      if(enemyHealth <= 0)
-      {
-         SPR_releaseSprite(enemies[1]);
-      }
      // SPR_releaseSprite(enemies[1]);
-     // enemiesPosX[1] = 0;
-      //moveY = 0;
+      
        //enemiesPosY[1] -= FIX32(30l);
       
   }

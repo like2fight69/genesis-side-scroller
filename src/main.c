@@ -6,32 +6,67 @@
 #include "projectile.h"
 #include "entities.h"
 #include "hud.h"
-#include "menu.h"
+
 #include "level.h"
 #include "camera.h"
 #include "sfx.h"
 #include "hitbox.h"
 #include "items.h"
+//#include "menu.h"
 #include "res_gfx.h"
 #include "res_sound.h"
 #include "res_sprite.h"
 
 bool paused;
 bool menuState;
+enum GAME_STATE
+{
+    STATE_MENU,
+    STATE_PLAY
+};
+enum GAME_STATE currentState;
+typedef struct
+{
+    u16 x;
+    u16 y;
+    char label[10];
+} Option;
+
+#define NUM_OPTIONS 3
+Option options[NUM_OPTIONS] = {
+    {8, 8, "START"},
+    {8, 9, "OPTIONS"},
+    {8, 10, "EXIT"},
+};
+
+u8 currentIndex = 0;
+Sprite *cursor;
+
+void updateCursorPosition();
+void joyEventHandler(u16 joy, u16 changed, u16 state);
+void moveUp();
+void moveDown();
+void select(u16 Option);
+void pickStart();
+void pickOptions();
+void pickExit();
+
+
+
+
 // forward
 static void handleInput();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 static void vblank();
-//Make menu
+u16 ind;
 
 int main(u16 hard)
 {
     u16 palette[64];
-    u16 ind;
+    //u16 ind;
 
-    paused = FALSE;
+    paused = TRUE;//FALSE
     menuState = TRUE;
-
     // initialization
     VDP_setScreenWidth320();
     // set all palette to black
@@ -45,32 +80,36 @@ int main(u16 hard)
     // need to increase a bit DMA buffer size to init both plan tilemap and sprites
     DMA_setBufferSize(10000);
     DMA_setMaxTransferSize(10000);
-
+    VDP_drawText("Hello Mega Drive World!", 8, 12);
     // init sprite engine with default parameters
     SPR_init();
-   //test
+    currentState = STATE_MENU;
+    ind = TILE_USER_INDEX;
     if(menuState)
     {
-        paused = TRUE;
-        int += MENU_init(ind);
-
+        //paused = TRUE;
+        //ind += MENU_init(ind);
+        //VDP_setBackgroundColor(15);
+        
+       // SPR_setPriority(player, TRUE);
+         //SPR_isVisible(player, HIDDEN);
+       
     }else{
-        paused = !paused;
-        menuState = !menuState;
+      
     }
-    //test
-    ind = TILE_USER_INDEX;
-    ind += LEVEL_init(ind);
-    CAMERA_init();
-    ind += PLAYER_init(ind);
+
+    //ind = TILE_USER_INDEX;
+    //ind += LEVEL_init(ind);
+    //CAMERA_init();
+    //ind += PLAYER_init(ind);
     //ind += LIFEBAR_init(ind);
     //ind += SGUAGE_init(ind);
     //ind += ITEMS_init(ind);
     //ind += PROJECTILE_init(ind);
-    ind += ENTITIES_init(ind);
-    ind += HITBOX_init(ind);
+    //ind += ENTITIES_init(ind);
+    //ind += HITBOX_init(ind);
     //ind += HUD_init(ind);
-
+    
     // set camera position
     CAMERA_centerOn(160, 100);
     // update sprite
@@ -95,7 +134,14 @@ int main(u16 hard)
     // set joy and vblank handler
     JOY_setEventHandler(joyEvent);
     SYS_setVBlankCallback(vblank);
-
+ u16 i = 0;
+for(i; i < NUM_OPTIONS; i++){
+    Option o = options[i];
+    VDP_drawText(o.label,o.x,o.y);
+    
+}
+   cursor = SPR_addSprite(&gfx_cursor, 0, 0, 0);
+   updateCursorPosition();
     // just to monitor frame CPU usage
     SYS_showFrameLoad(TRUE);
 
@@ -103,7 +149,7 @@ int main(u16 hard)
     {
         // first
         handleInput();
-
+       
         if (!paused)
         {
             // update player first
@@ -173,19 +219,90 @@ static void handleInput()
 static void joyEvent(u16 joy, u16 changed, u16 state)
 {
     // START button state changed --> pause / unpause
+    if (changed & state & BUTTON_UP)
+    {
+        moveUp();
+    }
+    else if(changed & state & BUTTON_DOWN){
+        moveDown();
+    }
+
+
     if (changed & state & BUTTON_START)
     {
         paused = !paused;
+        //menuState = !menuState;
+        select(currentIndex);
+        
         HUD_setVisibility(paused);
     }
 
     // can't do more in paused state
-    if (paused) return;
+    //if (paused) return;
 
     // handle player joy actions
     PLAYER_doJoyAction(joy, changed, state);
 }
+void select(u16 Option){
+    switch (Option)
+    {
+    case 0:{
+        //start game loop
+        pickStart();
+        break;
+    }
+    case 1:{
+        pickOptions();
+        break;
+    }
+    case 2:{
+        pickExit();
+        break;
+    }
+    
+    default:
+        break;
+    }
+}
+void pickStart(){
+    VDP_clearText(8, 12, 20);
+    VDP_drawText("Picked Start", 8, 12);
+    ind = TILE_USER_INDEX;
+    ind += LEVEL_init(ind);
+    CAMERA_init();
+    ind += PLAYER_init(ind);
+    ind += LIFEBAR_init(ind);
+    ind += ENTITIES_init(ind);
+    ind += HITBOX_init(ind);
+}
 
+void pickOptions(){
+    VDP_clearText(8, 12, 20);
+    VDP_drawText("Picked Options", 8, 12);
+}
+
+void pickExit(){
+    VDP_clearText(8, 12, 20);
+    VDP_drawText("Picked Exit", 8, 12);
+}
+void updateCursorPosition()
+{
+ SPR_setPosition(cursor, options[currentIndex].x*8-12, options[currentIndex].y*8);
+
+}
+void moveUp()
+{
+     if(currentIndex > 0){
+        currentIndex--;
+        updateCursorPosition();
+    }
+}
+void moveDown(){
+    if(currentIndex < NUM_OPTIONS-1){
+        currentIndex++;
+        updateCursorPosition();
+    }
+}
 static void vblank()
 {
     // handle vblank stuff

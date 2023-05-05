@@ -72,35 +72,29 @@ u16 ENTITIES_init(u16 vramIndex)
 void ENTITIES_update(void)
 {
 
-    enemiesPosY[1] += moveY;
+    enemiesPosY[1] += moveY;//+=
     if (moveY)
     {
         if (enemiesPosY[1] > MAX_POSY)
         {
             enemiesPosY[1] = MAX_POSY;
             moveY = 0;
-            entitieKnockedDown = 0;
-            SPR_setAnim(enemies[1], ANIM_WALKING);
         }
         else moveY += gravit;
     }
-    if(entitieKnockedDown == 1)
-    {
-        //enemy should stay on ground for a few seconds
-        SPR_setAnim(enemies[1], ANIM_KNOCKED);
-    }
-
     // enemies 'physic'
     if (enemiesXOrder[0] > 0) enemiesPosX[0] += FIX32(1.5);
     else enemiesPosX[0] -= FIX32(1.5);
-    if (enemiesXOrder[1] > 0) enemiesPosX[1] += FIX32(0.7);
-    else enemiesPosX[1] -= FIX32(0.7);
+    
+    if (enemiesXOrder[1] > xOrder) enemiesPosX[1] += FIX32(0.7);//0.7
+    else enemiesPosX[1] -= FIX32(0.7);//-=
+    
 
     // update internal state
     for(u16 i = 0; i < NUM_ENEMY; i++)
     {
-        if ((enemiesPosX[i] >= MAX_POSX) || (enemiesPosX[i] <= MIN_POSX))
-            enemiesXOrder[i] = -enemiesXOrder[i];
+        if ((enemiesPosX[i] >= MAX_POSX) || (enemiesPosX[i] <= MIN_POSX))//MAX_POSX
+            enemiesXOrder[i] = -enemiesXOrder[i];//-enemiesXOrder[i];
     }
 
     // then update animation from internal state (only first enemy require flip here)

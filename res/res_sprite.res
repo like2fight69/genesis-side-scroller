@@ -1,5 +1,7 @@
-SPRITE sonic_sprite "sprite/sonic.png" 6 6 FAST 1
+
+SPRITE sonic_sprite "sprite/sonic.png" 6 6 FAST 5
 SPRITE projectile_sprite "sprite/projectile.png" 6 6 FAST 5
+SPRITE gfx_cursor "cursor.bmp" 1 1 NONE 0
 SPRITE enemy01_sprite "sprite/enemy01.png" 6 4 BEST 5
 SPRITE enemy02_sprite "sprite/enemy02.png" 6 4 BEST 5
 SPRITE hitbox_sprite "sprite/hitbox.png" 6 4 BEST 5

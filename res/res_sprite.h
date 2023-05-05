@@ -3,6 +3,7 @@
 
 extern const SpriteDefinition sonic_sprite;
 extern const SpriteDefinition projectile_sprite;
+extern const SpriteDefinition gfx_cursor;
 extern const SpriteDefinition enemy01_sprite;
 extern const SpriteDefinition enemy02_sprite;
 extern const SpriteDefinition hitbox_sprite;
