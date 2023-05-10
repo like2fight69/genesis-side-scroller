@@ -35,33 +35,33 @@ u16 ENTITIES_init(u16 vramIndex)
      jmpSpd = JUMP_SPEED_DEFAULT;
      gravit = GRAV_DEFAULT;
     // enemies position
-    enemiesPosX[0] = FIX32(300L);
-    enemiesPosY[0] = MAX_POSY - FIX32(100);
+    //enemiesPosX[0] = FIX32(300L);
+    //enemiesPosY[0] = MAX_POSY - FIX32(100);
     enemiesPosX[1] = FIX32(128L);
     enemiesPosY[1] = MAX_POSY + FIX32(5);
     enemiesXOrder[0] = -1;
     enemiesXOrder[1] = 1;
     moveY = FIX32(0);
     // init enemies sprites
-    enemies[0] = SPR_addSprite(&enemy01_sprite, ENEMIES_hitbox.x, ENEMIES_hitbox.y, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
+    //enemies[0] = SPR_addSprite(&enemy01_sprite, ENEMIES_hitbox.x, ENEMIES_hitbox.y, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     enemies[1] = SPR_addSprite(&enemy02_sprite, ENEMIES_hitbox.x, ENEMIES_hitbox.y, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
 
     // disable auto tile upload for enemies sprites as we will pre-load all animation frams in VRAM for them
-    SPR_setAutoTileUpload(enemies[0], FALSE);
+    //SPR_setAutoTileUpload(enemies[0], FALSE);
     SPR_setAutoTileUpload(enemies[1], FALSE);
     // set frame change callback for enemies so we can update tile index easily
-    SPR_setFrameChangeCallback(enemies[0], &frameChanged);
+    //SPR_setFrameChangeCallback(enemies[0], &frameChanged);
     SPR_setFrameChangeCallback(enemies[1], &frameChanged);
 
     // pre-load all animation frames into VRAM for enemies
     ind = vramIndex;
-    sprTileIndexes[0] = SPR_loadAllFrames(&enemy01_sprite, ind, &numTile);
-    ind += numTile;
+    //sprTileIndexes[0] = SPR_loadAllFrames(&enemy01_sprite, ind, &numTile);
+    //ind += numTile;
     sprTileIndexes[1] = SPR_loadAllFrames(&enemy02_sprite, ind, &numTile);
     ind += numTile;
 
     // store enemy 'sprTileIndexes' table index in 'data' field (can be used freely)
-    enemies[0]->data = 0;
+   // enemies[0]->data = 0;
     enemies[1]->data = 1;
 
     // return end VRAM index (static allocation)
@@ -83,11 +83,11 @@ void ENTITIES_update(void)
         else moveY += gravit;
     }
     // enemies 'physic'
-    if (enemiesXOrder[0] > 0) enemiesPosX[0] += FIX32(1.5);
-    else enemiesPosX[0] -= FIX32(1.5);
+    //if (enemiesXOrder[0] > 0) enemiesPosX[0] += FIX32(1.5);
+    //else enemiesPosX[0] -= FIX32(1.5);
     
-    if (enemiesXOrder[1] > xOrder) enemiesPosX[1] += FIX32(0.7);//0.7
-    else enemiesPosX[1] -= FIX32(0.7);//-=
+    if (enemiesXOrder[1] > xOrder) enemiesPosX[1] -= FIX32(0.7);//0.7 come towards player
+    else enemiesPosX[1] += FIX32(0.7);//-=
     
 
     // update internal state
