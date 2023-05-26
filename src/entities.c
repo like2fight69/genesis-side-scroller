@@ -86,15 +86,17 @@ void ENTITIES_update(void)
     //if (enemiesXOrder[0] > 0) enemiesPosX[0] += FIX32(1.5);
     //else enemiesPosX[0] -= FIX32(1.5);
     
-    if (enemiesXOrder[1] > xOrder) enemiesPosX[1] -= FIX32(0.7);//0.7 come towards player
+    /*if (enemiesXOrder[1] > xOrder) enemiesPosX[1] -= FIX32(0.7);//0.7 come towards player
     else enemiesPosX[1] += FIX32(0.7);//-=
-    
+    */
 
     // update internal state
     for(u16 i = 0; i < NUM_ENEMY; i++)
     {
-        if ((enemiesPosX[i] >= MAX_POSX) || (enemiesPosX[i] <= MIN_POSX))//MAX_POSX
-            enemiesXOrder[i] = -enemiesXOrder[i];//-enemiesXOrder[i];
+        if ((enemiesPosX[i] >= posX)) //|| (enemiesPosX[i] <= posX))//MAX_POSX MIN_POSX
+            enemiesPosX[i] -= FIX32(0.7);//enemiesXOrder[i] = enemiesXOrder[i];//-enemiesXOrder[i];
+        else enemiesPosX[i] += FIX32(0.7);//enemiesXOrder[i] = -enemiesXOrder[i];
+
     }
 
     // then update animation from internal state (only first enemy require flip here)
