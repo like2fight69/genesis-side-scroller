@@ -100,7 +100,12 @@ void ENTITIES_update(void)
         //if enemy position == posX attack
         if(entitieIsAttacking == 1)
         {   //need to readjust sprite height
+            //change animation speed
+            //auto int ss = 5;
+            //waitTick(ss);
             SPR_setAnim(enemies[1], ENTITiE_ANIM_ATTACK);
+        }else{
+            SPR_setAnim(enemies[1], 0);
         }
         if ((enemiesPosX[i] >= posX)) //|| (enemiesPosX[i] <= posX))//MAX_POSX MIN_POSX
             enemiesPosX[i] -= FIX32(0.7);//enemiesXOrder[i] = enemiesXOrder[i];//-enemiesXOrder[i];

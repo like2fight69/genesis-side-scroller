@@ -134,7 +134,9 @@ if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX &&
    }
 
 
-}
+}else{
+      entitieIsAttacking = 0;
+   }
 
 
 
