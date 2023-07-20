@@ -50,6 +50,7 @@ need to extend sprite sheet
 animation when enemy hit
 main menu:DONE
 return to menu when player health is 0:
+switch between spirit gun and melee
 */
 // player (sonic) sprite
 //Sprite* player;

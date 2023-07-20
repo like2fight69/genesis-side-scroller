@@ -117,7 +117,9 @@ if(healthpackPosX[0] < posX + BOX_width && healthpackPosX[0] + ENEMIES_width > p
 if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX && !isAttacking)
 {
    HEA -= 10;
-   
+   entitieIsAttacking = 1;
+   //run sprite animation
+
    switch(HEA)
    {
    case 90: SPR_setAnim(lifebar, ANIM_90);

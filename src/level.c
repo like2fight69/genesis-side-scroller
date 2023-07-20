@@ -44,7 +44,7 @@ u16 LEVEL_init(u16 vramIndex)
     ind += bgb_tileset.numTile;
 
     // init backgrounds
-    bga = MAP_create(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]));
+    bga = MAP_create(&bga_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[0]));//0
     bgb = MAP_create(&bgb_map, BG_B, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, bgBaseTileIndex[1]));
 
     // return end VRAM index

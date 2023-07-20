@@ -10,8 +10,12 @@
 
 
 //#define NUM_ENEMY       2
-
-
+//TODO:
+/*
+ *Enemy attack player
+ *Create enemy attack sprites
+ *
+*/
 // enemies sprites
 //Sprite* enemies[NUM_ENEMY];
 
@@ -93,6 +97,11 @@ void ENTITIES_update(void)
     // update internal state
     for(u16 i = 0; i < NUM_ENEMY; i++)
     {
+        //if enemy position == posX attack
+        if(entitieIsAttacking == 1)
+        {   //need to readjust sprite height
+            SPR_setAnim(enemies[1], ENTITiE_ANIM_ATTACK);
+        }
         if ((enemiesPosX[i] >= posX)) //|| (enemiesPosX[i] <= posX))//MAX_POSX MIN_POSX
             enemiesPosX[i] -= FIX32(0.7);//enemiesXOrder[i] = enemiesXOrder[i];//-enemiesXOrder[i];
         else enemiesPosX[i] += FIX32(0.7);//enemiesXOrder[i] = -enemiesXOrder[i];
