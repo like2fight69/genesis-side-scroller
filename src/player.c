@@ -204,7 +204,7 @@ void PLAYER_update(void)
                 
                 XGM_startPlayPCM(SFX_PUNCH, 1, SOUND_PCM_CH2);
                 //time the animation
-               waitTick(ss);
+               //waitTick(ss);
                 //waitMs(ss);
                 //startTimer(timer);
                    

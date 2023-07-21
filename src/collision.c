@@ -18,6 +18,7 @@
 
  fix32 s_buffer = 4;//4
  int HEA = 100;
+ entitieHealth = 100;
 //check pointer to struct
  /*bool RECT_rect(HIT_box A, HIT_box B)
 {
@@ -171,8 +172,12 @@ if(enemiesPosX[1] < posX + BOX_width && enemiesPosX[1] + ENEMIES_width > posX  &
   {
       KLog_U1("test:", 200);
      // SPR_releaseSprite(enemies[1]);
-      
+      entitieHealth -= 10;
+      if(entitieHealth == 0)
+      {
+         SPR_releaseSprite(enemies[1]);
        //enemiesPosY[1] -= FIX32(30l);
+      }
       
   }
    

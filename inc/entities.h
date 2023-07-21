@@ -13,6 +13,7 @@ fix32 moveY;
 fix32 jmpSpd;
 fix32 gravit;
 int entitieIsAttacking;
+int entitieHealth;
 s16 enemiesXOrder[NUM_ENEMY];
 void ENTITIES_update(void);
 void ENTITIES_updateScreenPosition();

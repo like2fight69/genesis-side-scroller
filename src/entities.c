@@ -46,6 +46,7 @@ u16 ENTITIES_init(u16 vramIndex)
     enemiesXOrder[0] = -1;
     enemiesXOrder[1] = 1;
     moveY = FIX32(0);
+    //entitieHealth = 100;
     // init enemies sprites
     //enemies[0] = SPR_addSprite(&enemy01_sprite, ENEMIES_hitbox.x, ENEMIES_hitbox.y, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
     enemies[1] = SPR_addSprite(&enemy02_sprite, ENEMIES_hitbox.x, ENEMIES_hitbox.y, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
